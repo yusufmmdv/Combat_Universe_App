@@ -80,11 +80,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           DevIcon(d.id, size: 46, col: sel == d.id ? C.red2 : C.sub),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(devName(d.id), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-                              const SizedBox(height: 2),
-                              Text(d.sub, style: const TextStyle(color: C.sub, fontSize: 13)),
-                            ]),
+                            child: Text(devName(d.id), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
                           ),
                           if (sel == d.id) const Icon(Icons.check_circle, color: C.red),
                         ]),

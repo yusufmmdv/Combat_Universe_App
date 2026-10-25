@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/i18n/app_i18n.dart';
 import '../../core/state/app_state.dart';
+import '../../core/social/cu_social.dart';
 import '../../models/game.dart';
 import '../../models/combo.dart';
 import '../../models/guide.dart';
@@ -41,10 +42,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
             child: ListView(padding: const EdgeInsets.only(bottom: 48), children: [
               CharHero(g, name),
               SizedBox(
-                height: 54,
+                height: 40,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
                   children: [
                     for (final d in devs)
                       Padding(
@@ -120,9 +121,9 @@ class _CharHeroState extends State<CharHero> with SingleTickerProviderStateMixin
     final nG = app.guides.where((x) => x.gameId == g.id && x.charId == name).length;
     final views = cs.fold<int>(0, (s, x) => s + x.views);
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(34)),
+      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(28)),
       child: SizedBox(
-        height: 250 + top,
+        height: 200 + top,
         child: Stack(children: [
           Positioned.fill(
             child: DecoratedBox(
@@ -185,11 +186,13 @@ class _CharHeroState extends State<CharHero> with SingleTickerProviderStateMixin
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               GlassBtn(Icons.arrow_back_rounded, () => Navigator.pop(context)),
               const HexLogo(),
-              GlassBtn(Icons.add_rounded, () => go(context, ComboStudio(game: g.id, char: name))),
+              GlassBtn(Icons.add_rounded, () {
+                if (requireAuth(context)) go(context, ComboStudio(game: g.id, char: name));
+              }),
             ]),
           ),
           Positioned(
-            left: 18, right: 18, bottom: 20,
+            left: 18, right: 18, bottom: 12,
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
               Text(g.name, style: const TextStyle(color: C.red2, letterSpacing: 3, fontWeight: FontWeight.w700, fontSize: 11)),
               ShaderMask(
@@ -197,9 +200,9 @@ class _CharHeroState extends State<CharHero> with SingleTickerProviderStateMixin
                   begin: Alignment.topCenter, end: Alignment.bottomCenter,
                   colors: [Colors.white, Color(0xFFFF9AA0)], stops: [.4, 1],
                 ).createShader(r),
-                child: Text(name.toUpperCase(), style: hd(46, color: Colors.white, height: .95, ls: 1)),
+                child: Text(name.toUpperCase(), style: hd(36, color: Colors.white, height: .95, ls: 1)),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Wrap(spacing: 8, runSpacing: 8, children: [
                 chip('${cs.length}', tr('combos').toLowerCase()),
                 chip('$nG', tr('builds').toLowerCase()),
@@ -269,12 +272,12 @@ class _ComboListState extends State<ComboList> {
             ? (a, b) => b.updated.compareTo(a.updated)
             : (a, b) => b.views.compareTo(a.views));
         return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: Column(children: [
             SearchField('${tr('title')} / ${tr('combos')}…', (v) => setState(() => q = v)),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             SizedBox(
-              height: 44,
+              height: 36,
               child: ListView(scrollDirection: Axis.horizontal, children: [
                 Pill(tag == null ? tr('filter') : '#$tag', selected: true, filled: true, onTap: () => _filter(c, base)),
                 const SizedBox(width: 8),
@@ -285,6 +288,7 @@ class _ComboListState extends State<ComboList> {
                 Pill(tr('mine'), selected: mode == 2, onTap: () => setState(() => mode = 2)),
               ]),
             ),
+            const SizedBox(height: 12),
             for (var i = 0; i < list.length; i++)
               Appear(i: i > 6 ? 6 : i, child: ComboCard(list[i], key: ValueKey(list[i].id))),
           ]),
@@ -388,16 +392,17 @@ class _ComboCardState extends State<ComboCard> {
                 ]),
               ),
               Row(children: [
-                Avatar(x.author, size: 22),
-                const SizedBox(width: 8),
                 Expanded(
-                  child: Text('${x.author} · ${fmt(x.updated)}', maxLines: 1, overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: C.sub, fontSize: 11)),
+                  child: AuthorChip(
+                    author: AuthorRef(
+                      id: 'u_${x.author}',
+                      name: x.author,
+                      handle: x.author.toLowerCase(),
+                    ),
+                  ),
                 ),
-                IconTap(liked ? Icons.favorite : Icons.favorite_border, liked ? C.red : C.sub,
-                    () => app.toggle(app.liked, x.id), label: '${x.likes + (liked ? 1 : 0)}'),
-                IconTap(saved ? Icons.bookmark : Icons.bookmark_border, saved ? C.red : C.sub,
-                    () => app.toggle(app.saved, x.id)),
+                LikeButton(itemId: x.id, baseCount: x.likes),
+                SaveButton(itemId: x.id),
                 if (x.author != meName)
                   IconTap(app.reported.contains(x.id) ? Icons.flag : Icons.flag_outlined,
                       app.reported.contains(x.id) ? C.gold : C.sub, () => showReport(c, x)),

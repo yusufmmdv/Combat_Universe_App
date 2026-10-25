@@ -118,11 +118,11 @@ class TabSwitch extends StatelessWidget {
   const TabSwitch({super.key, required this.tab, required this.labels, required this.onChanged});
   @override
   Widget build(BuildContext context) => Container(
-        margin: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-        padding: const EdgeInsets.all(4),
-        height: 54,
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        padding: const EdgeInsets.all(3),
+        height: 46,
         decoration: BoxDecoration(
-            color: C.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line)),
+            color: C.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line)),
         child: Stack(children: [
           AnimatedAlign(
             alignment: tab == 0 ? Alignment.centerLeft : Alignment.centerRight,
@@ -132,9 +132,9 @@ class TabSwitch extends StatelessWidget {
               widthFactor: 1 / labels.length,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(11),
                   gradient: const LinearGradient(colors: [C.red, Color(0xFF8E030A)]),
-                  boxShadow: [BoxShadow(color: C.red.withAlpha(115), blurRadius: 18, offset: const Offset(0, 6))],
+                  boxShadow: [BoxShadow(color: C.red.withAlpha(115), blurRadius: 14, offset: const Offset(0, 4))],
                 ),
               ),
             ),
@@ -149,7 +149,7 @@ class TabSwitch extends StatelessWidget {
                     child: AnimatedDefaultTextStyle(
                       duration: const Duration(milliseconds: 250),
                       style: TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 14, letterSpacing: 1.5,
+                          fontWeight: FontWeight.w700, fontSize: 13, letterSpacing: 1.2,
                           color: tab == i ? Colors.white : C.sub),
                       child: Text(labels[i].toUpperCase()),
                     ),

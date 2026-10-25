@@ -9,6 +9,7 @@ import '../../models/game.dart';
 import '../../models/combo.dart';
 import '../../widgets/common/cu_card.dart';
 import '../../widgets/notation/notation_row.dart';
+import '../../core/social/cu_social.dart';
 
 Widget dd(String value, List<String> items, ValueChanged<String?> on, {String Function(String)? label}) =>
     Container(
@@ -343,6 +344,7 @@ class _ComboStudioState extends State<ComboStudio> {
   late String game = widget.game, char = widget.char;
   final title = TextEditingController(), dmg = TextEditingController();
   final tags = <String>{};
+  String? videoUrl;
   var steps = <String>[];
   int cur = 0; // курсор: вставка идёт перед steps[cur]
   final _undo = <List<String>>[], _redo = <List<String>>[];
@@ -498,6 +500,8 @@ class _ComboStudioState extends State<ComboStudio> {
                 ),
                 const SizedBox(height: 12),
                 TextField(controller: dmg, keyboardType: TextInputType.number, decoration: deco(tr('damage'))),
+                const SizedBox(height: 12),
+                VideoAttachField(onChanged: (url) => videoUrl = url),
                 const SizedBox(height: 12),
                 Wrap(spacing: 8, runSpacing: 8, children: [
                   for (final t in _quickTags)

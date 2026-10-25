@@ -101,22 +101,11 @@ class _PadPainter extends CustomPainter {
       c.drawCircle(p, r * .55, Paint()..style = PaintingStyle.stroke..strokeWidth = h * .015..color = const Color(0x55FFFFFF));
     }
 
-    void txt(String t, Offset p, Color k, double fs) {
-      final tp = TextPainter(
-          text: TextSpan(text: t, style: TextStyle(color: k, fontSize: fs, fontWeight: FontWeight.w900)),
-          textDirection: TextDirection.ltr)
-        ..layout();
-      tp.paint(c, p - Offset(tp.width / 2, tp.height / 2));
+    Paint fillPaint(List<Color> cs) {
+      return Paint()
+        ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: cs)
+            .createShader(Offset.zero & s);
     }
-
-    void btn(Offset p, double r, Color bg) {
-      dot(p, r, bg);
-      c.drawCircle(p, r, Paint()..style = PaintingStyle.stroke..strokeWidth = h * .014..color = const Color(0x44FFFFFF));
-    }
-
-    final fillPaint = (List<Color> cs) => Paint()
-      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: cs)
-          .createShader(Offset.zero & s);
 
     if (id == 'ps') {
       final body = Path()
@@ -224,7 +213,9 @@ class DevIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final box = (Widget ch) => SizedBox(width: size * 1.5, height: size, child: ch);
+    Widget box(Widget ch) {
+      return SizedBox(width: size * 1.5, height: size, child: ch);
+    }
     if (id == 'kb') {
       final s = size * .32;
       return box(Center(
